@@ -1,0 +1,1158 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Levantémonos y Edifiquemos - Recepción de Proyectos</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <!-- html2pdf para generar el informe completo -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            blue: '#1e3a8a', // Azul profundo (Realeza/Cielo)
+                            gold: '#b45309', // Ámbar/Dorado oscuro (Piedra, desierto, madera)
+                            light: '#fef3c7', // Arena claro
+                            stone: '#e7e5e4' // Color piedra
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        serif: ['Merriweather', 'serif'], // Para dar un toque más épico/histórico a los títulos
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=Merriweather:ital,wght@0,400;0,700;1,400&display=swap');
+        
+        body { font-family: 'Inter', sans-serif; background-color: #f5f5f4; background-image: url('data:image/svg+xml,%3Csvg width="60" height="60" viewBox="0 0 60 60" xmlns="http://www.w3.org/2000/svg"%3E%3Cg fill="none" fill-rule="evenodd"%3E%3Cg fill="%23d6d3d1" fill-opacity="0.2"%3E%3Cpath d="M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z"/%3E%3C/g%3E%3C/g%3E%3C/svg%3E'); }
+        
+        h1, h2, h3, .font-serif { font-family: 'Merriweather', serif; }
+
+        /* Custom scrollbar */
+        textarea::-webkit-scrollbar { width: 8px; }
+        textarea::-webkit-scrollbar-track { background: #f1f1f1; border-radius: 4px; }
+        textarea::-webkit-scrollbar-thumb { background: #d6d3d1; border-radius: 4px; }
+        textarea::-webkit-scrollbar-thumb:hover { background: #a8a29e; }
+
+        .step-container { display: none; animation: fadeIn 0.5s ease-in-out; }
+        .step-container.active { display: block; }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(15px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .input-field {
+            width: 100%; padding: 0.75rem; border: 1px solid #d6d3d1; border-radius: 0.5rem;
+            margin-top: 0.25rem; margin-bottom: 1rem; transition: all 0.2s; background-color: #fffaf0;
+        }
+        .input-field:focus { outline: none; border-color: #b45309; box-shadow: 0 0 0 3px rgba(180, 83, 9, 0.1); background-color: #ffffff; }
+        
+        .label-text { font-weight: 600; color: #44403c; font-size: 0.875rem; }
+        .help-text { font-size: 0.75rem; color: #78716c; margin-bottom: 0.5rem; display: block; font-style: italic; }
+
+        /* Estilos para el PDF generado */
+        #report-content { display: none; background: white; padding: 20px; color: black; font-family: 'Merriweather', serif; }
+        #report-content h2 { color: #1e3a8a; border-bottom: 2px solid #b45309; padding-bottom: 5px; margin-top: 20px; font-family: 'Merriweather', serif; }
+        #report-content h3 { color: #44403c; margin-top: 15px; font-family: 'Inter', sans-serif;}
+        #report-content p { margin-bottom: 10px; line-height: 1.6; font-family: 'Inter', sans-serif; font-size: 14px;}
+        #report-content table { width: 100%; border-collapse: collapse; margin-top: 10px; font-family: 'Inter', sans-serif; font-size: 12px; }
+        #report-content th, #report-content td { border: 1px solid #d6d3d1; padding: 8px; text-align: left; }
+        #report-content th { background-color: #f5f5f4; color: #44403c; }
+
+        /* Novedad: Control de saltos de página para PDFs largos */
+        .pdf-section { page-break-inside: avoid; margin-bottom: 25px; width: 100%; display: block; }
+        #report-content table { page-break-inside: auto; width: 100%; }
+        #report-content tr { page-break-inside: avoid; page-break-after: auto; }
+        #report-content thead { display: table-header-group; }
+        #report-content tfoot { display: table-footer-group; }
+    </style>
+</head>
+<body class="text-gray-800 antialiased min-h-screen flex flex-col">
+
+    <!-- Header -->
+    <header class="bg-white shadow-md border-b-4 border-brand-gold sticky top-0 z-50">
+        <div class="max-w-4xl mx-auto px-4 py-3 flex justify-between items-center">
+            <div class="flex items-center gap-3">
+                <img src="https://i.postimg.cc/1zGKLz1g/14.png" alt="Logo Fundación" class="h-12 w-auto object-contain">
+                <div class="hidden sm:block">
+                    <h1 class="font-bold text-brand-blue leading-tight text-sm">Fundación Social<br>Salud Hoy</h1>
+                </div>
+            </div>
+            <div class="text-right">
+                <span class="text-xs text-brand-gold font-bold uppercase tracking-wider block">Levantémonos y edifiquemos</span>
+                <span class="text-xs text-gray-500 font-medium italic">Transformando vidas, restaurando comunidades</span>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content Area -->
+    <main class="flex-grow flex flex-col items-center p-4 sm:p-6">
+        
+        <!-- Hero Section -->
+        <div id="hero-section" class="max-w-3xl w-full bg-white rounded-2xl shadow-xl p-6 sm:p-10 text-center mt-4 border border-stone-200">
+            <div class="mb-6 inline-flex p-5 bg-brand-light rounded-full text-brand-gold shadow-inner">
+                <i class="fa-solid fa-person-digging text-5xl"></i>
+            </div>
+            <h2 class="text-3xl sm:text-4xl font-bold text-brand-blue mb-4">Tu comunidad necesita un líder para su restauración</h2>
+            
+            <div class="bg-blue-50 border-l-4 border-brand-blue p-4 mb-6 text-left rounded-r-lg shadow-sm">
+                <p class="text-sm text-blue-900">
+                    <strong>Inspirados en una historia de liderazgo:</strong> Nehemías fue un personaje histórico que, al ver su ciudad en ruinas, no se quedó de brazos cruzados. Investigó el problema (inspeccionó las ruinas), organizó a la comunidad por familias, buscó recursos y construyó soluciones. <strong>Hoy buscamos líderes como él.</strong>
+                </p>
+            </div>
+
+            <p class="text-gray-600 text-base mb-8">
+                Te invitamos a contarnos qué necesidad o problema existe en tu territorio, qué solución propones y qué recursos hacen falta. Nosotros te ayudaremos a organizar esta información para convertirla en un proyecto real y estructurado.
+            </p>
+            
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8 text-left">
+                <div class="bg-stone-50 p-4 rounded-lg border border-stone-200 shadow-sm">
+                    <i class="fa-solid fa-eye text-brand-gold text-2xl mb-2"></i>
+                    <h3 class="font-bold text-brand-blue">1. Inspecciona las ruinas</h3>
+                    <p class="text-sm text-stone-600 mt-1">Cuéntanos el problema de tu comunidad paso a paso. No necesitas ser experto.</p>
+                </div>
+                <div class="bg-stone-50 p-4 rounded-lg border border-stone-200 shadow-sm">
+                    <i class="fa-solid fa-scroll text-brand-gold text-2xl mb-2"></i>
+                    <h3 class="font-bold text-brand-blue">2. Traza el plan</h3>
+                    <p class="text-sm text-stone-600 mt-1">Organizaremos y evaluaremos la información para darle forma de proyecto estructurado.</p>
+                </div>
+                <div class="bg-stone-50 p-4 rounded-lg border border-stone-200 shadow-sm">
+                    <i class="fa-solid fa-handshake-angle text-brand-gold text-2xl mb-2"></i>
+                    <h3 class="font-bold text-brand-blue">3. Busca el respaldo</h3>
+                    <p class="text-sm text-stone-600 mt-1">Identificamos alianzas, desarrollo técnico y buscaremos las "cartas del rey" (financiación).</p>
+                </div>
+            </div>
+
+            <div class="bg-amber-50 border-l-4 border-brand-gold p-4 mb-8 text-left text-sm text-amber-900 rounded-r-lg">
+                <i class="fa-solid fa-circle-info mr-2"></i> <strong>Nota importante:</strong> Presentar esta visión es el primer paso. No garantiza la selección automática ni la obtención inmediata de recursos, pero es el inicio de la reedificación conjunta.
+            </div>
+
+            <div class="flex flex-col sm:flex-row gap-4 justify-center">
+                <button onclick="startForm()" class="bg-brand-blue hover:bg-blue-800 text-white font-bold py-3 px-8 rounded-full shadow-lg transition-transform transform hover:scale-105 flex items-center justify-center gap-2">
+                    Iniciar la Obra <i class="fa-solid fa-trowel-bricks"></i>
+                </button>
+                <button onclick="showHelp()" class="bg-stone-100 border-2 border-stone-300 hover:bg-stone-200 text-stone-700 font-bold py-3 px-8 rounded-full transition-colors flex items-center justify-center gap-2">
+                    <i class="fa-regular fa-compass"></i> ¿Cómo funciona?
+                </button>
+            </div>
+            
+            <div class="mt-8 border-t border-stone-200 pt-6 bg-stone-50 -mx-6 -mb-6 sm:-mx-10 sm:-mb-10 rounded-b-2xl p-6">
+                <p class="text-sm text-stone-600 mb-3 font-medium">¿Ya habías empezado a trazar los planos y guardaste un archivo?</p>
+                <label class="cursor-pointer bg-white border-2 border-brand-gold text-brand-gold hover:bg-brand-light font-bold py-2 px-6 rounded-full transition-colors inline-flex items-center gap-2 text-sm shadow-sm">
+                    <i class="fa-solid fa-file-import"></i> Retomar la obra (Cargar archivo)
+                    <input type="file" class="hidden" accept=".json" onchange="handleFileUpload(event)">
+                </label>
+            </div>
+        </div>
+
+        <!-- Form Section -->
+        <div id="form-section" class="max-w-4xl w-full hidden mt-4">
+            
+            <!-- Progress Bar -->
+            <div class="bg-white rounded-xl shadow-sm p-4 mb-6 sticky top-[72px] z-40 border-b-2 border-brand-gold">
+                <div class="flex justify-between items-center mb-2">
+                    <span class="text-xs font-bold text-brand-gold uppercase tracking-wider" id="step-indicator">Etapa 1 de 10</span>
+                    <div class="flex gap-2 sm:gap-4">
+                        <label class="cursor-pointer text-xs text-stone-600 font-bold hover:text-brand-blue flex items-center gap-1 bg-stone-100 px-2 py-1 rounded" title="Cargar archivo guardado">
+                            <i class="fa-solid fa-upload"></i> <span class="hidden sm:inline">Cargar</span>
+                            <input type="file" class="hidden" accept=".json" onchange="handleFileUpload(event)">
+                        </label>
+                        <button onclick="exportDraftToFile()" class="text-xs text-stone-600 font-bold hover:text-brand-blue flex items-center gap-1 bg-stone-100 px-2 py-1 rounded" title="Descargar como archivo">
+                            <i class="fa-solid fa-download"></i> <span class="hidden sm:inline">Descargar</span>
+                        </button>
+                        <button onclick="saveDraftAlert()" class="text-xs text-brand-blue font-bold hover:bg-blue-50 flex items-center gap-1 bg-blue-50 px-2 py-1 rounded border border-blue-200" title="Guardar en este dispositivo">
+                            <i class="fa-solid fa-bookmark"></i> <span class="hidden sm:inline">Guardar Progreso</span>
+                        </button>
+                    </div>
+                </div>
+                <div class="w-full bg-stone-200 rounded-full h-3 shadow-inner">
+                    <div id="progress-bar" class="bg-gradient-to-r from-brand-gold to-brand-blue h-3 rounded-full transition-all duration-500" style="width: 10%"></div>
+                </div>
+                <div class="text-center mt-2 text-sm font-bold text-brand-blue" id="step-title-display">El Llamado del Líder</div>
+            </div>
+
+            <!-- Form Container -->
+            <form id="initiative-form" class="bg-white rounded-2xl shadow-xl p-6 sm:p-8 border border-stone-200" onsubmit="event.preventDefault();">
+                
+                <div id="msg-container" class="hidden mb-4 p-4 rounded-lg text-sm font-medium transition-all"></div>
+
+                <!-- Paso 1: Identificación -->
+                <div class="step-container active" id="step-1" data-title="El Llamado del Líder (Identificación)">
+                    <h3 class="text-xl sm:text-2xl font-bold text-brand-blue mb-4 border-b-2 border-stone-100 pb-2"><i class="fa-solid fa-user-shield text-brand-gold mr-2"></i> 1. El Llamado del Líder</h3>
+                    <p class="text-sm text-stone-500 mb-4 italic font-serif">"Heme aquí, envíame a mí". Todo proceso de restauración comienza con alguien dispuesto a liderar.</p>
+
+                    <label class="label-text">Nombre completo de quien presenta la iniciativa <span class="text-red-500">*</span></label>
+                    <input type="text" name="proponente_nombre" class="input-field" required placeholder="Ej: Nehemías / Tu Nombre">
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                            <label class="label-text">Número de WhatsApp de contacto <span class="text-red-500">*</span></label>
+                            <input type="tel" name="proponente_whatsapp" class="input-field" required placeholder="Ej: 3001234567">
+                        </div>
+                        <div>
+                            <label class="label-text">Correo electrónico (Opcional)</label>
+                            <input type="email" name="proponente_email" class="input-field" placeholder="ejemplo@correo.com">
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                            <label class="label-text">Departamento <span class="text-red-500">*</span></label>
+                            <input type="text" name="proponente_departamento" class="input-field" required placeholder="Ej: La Guajira">
+                        </div>
+                        <div>
+                            <label class="label-text">Municipio <span class="text-red-500">*</span></label>
+                            <input type="text" name="proponente_municipio" class="input-field" required placeholder="Ej: Fonseca">
+                        </div>
+                    </div>
+
+                    <label class="label-text">Nombre de la comunidad, barrio, vereda, ranchería o territorio a intervenir <span class="text-red-500">*</span></label>
+                    <input type="text" name="proponente_comunidad" class="input-field" required>
+
+                    <label class="label-text">¿Te presentas a título personal o representas a una congregación/organización? <span class="text-red-500">*</span></label>
+                    <select name="proponente_tipo_representacion" class="input-field" required onchange="toggleOrgFields(this.value)">
+                        <option value="">Seleccione una opción...</option>
+                        <option value="Personal">A título personal (Líder individual)</option>
+                        <option value="Organización">En representación de un grupo, congregación u organización</option>
+                    </select>
+
+                    <div id="org-fields" class="hidden bg-stone-50 p-4 rounded-lg border border-stone-200 mt-2 shadow-inner">
+                        <label class="label-text">Nombre de la organización, iglesia o grupo</label>
+                        <input type="text" name="org_nombre" class="input-field">
+                        
+                        <label class="label-text">Tu cargo o función dentro de la comunidad/organización</label>
+                        <input type="text" name="org_cargo" class="input-field" placeholder="Ej: Pastor, Líder comunitaria, Presidente JAC">
+
+                        <label class="label-text">¿La organización está legalmente constituida? (Opcional)</label>
+                        <select name="org_legal" class="input-field">
+                            <option value="No aplica">No aplica / No lo sé</option>
+                            <option value="Sí">Sí (Tiene NIT/Personería Jurídica)</option>
+                            <option value="No">No, somos un grupo informal</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Paso 2: Clasificación -->
+                <div class="step-container" id="step-2" data-title="La Naturaleza de la Obra (Clasificación)">
+                    <h3 class="text-xl sm:text-2xl font-bold text-brand-blue mb-4 border-b-2 border-stone-100 pb-2"><i class="fa-solid fa-map text-brand-gold mr-2"></i> 2. La Naturaleza de la Obra</h3>
+                    
+                    <label class="label-text">Nombre o título provisional para esta iniciativa <span class="text-red-500">*</span></label>
+                    <input type="text" name="iniciativa_nombre" class="input-field" required placeholder="Ej: Restauración del Acueducto Veredal">
+
+                    <label class="label-text">Selecciona la categoría principal de esta "reedificación" <span class="text-red-500">*</span></label>
+                    <span class="help-text">Esto nos indicará de qué trata principalmente la obra.</span>
+                    <select name="categoria_principal" id="categoria_principal" class="input-field font-semibold" required onchange="updateDynamicForms()">
+                        <option value="">Seleccione una categoría...</option>
+                        <optgroup label="Desarrollo Económico (Los Mercados)">
+                            <option value="Negocio">A. Negocio o emprendimiento comunitario</option>
+                            <option value="Agro">B. Proyecto productivo agropecuario (Tierra y ganado)</option>
+                            <option value="Negocio">C. Transformación y comercialización de alimentos</option>
+                            <option value="Negocio">I. Generación de ingresos y empleo</option>
+                            <option value="Negocio">H. Artesanías, cultura y turismo comunitario</option>
+                        </optgroup>
+                        <optgroup label="Salud y Bienestar (Las Fuentes)">
+                            <option value="AguaSalud">D. Agua potable, saneamiento e higiene</option>
+                            <option value="AguaSalud">E. Salud comunitaria y prevención</option>
+                            <option value="Social">G. Seguridad alimentaria y nutrición</option>
+                        </optgroup>
+                        <optgroup label="Desarrollo Social e Infraestructura (Los Muros y Puertas)">
+                            <option value="Social">F. Educación, formación y desarrollo de capacidades</option>
+                            <option value="Social">J. Fortalecimiento de organizaciones comunitarias</option>
+                            <option value="Social">K. Desarrollo social y participación ciudadana</option>
+                            <option value="Social">L. Iniciativa social o ministerio de una iglesia</option>
+                            <option value="Social">M. Infraestructura y equipamiento comunitario</option>
+                        </optgroup>
+                        <option value="Otra">N. Otra iniciativa</option>
+                    </select>
+
+                    <label class="label-text mt-4">¿En qué etapa de construcción se encuentra? <span class="text-red-500">*</span></label>
+                    <select name="iniciativa_etapa" class="input-field" required>
+                        <option value="">Seleccione...</option>
+                        <option value="Idea">Solo es una visión/idea, aún no iniciamos</option>
+                        <option value="Planificacion">Estamos trazando los planos y organizando</option>
+                        <option value="Piloto">Hicimos una prueba o piloto inicial</option>
+                        <option value="Operacion">Ya está funcionando (La obra está en marcha)</option>
+                        <option value="Expansion">Queremos ampliar o fortalecer lo que ya construimos</option>
+                    </select>
+
+                    <label class="label-text">¿Qué objetivo principal persigue esta obra? <span class="text-red-500">*</span></label>
+                    <select name="iniciativa_objetivo" class="input-field" required>
+                        <option value="">Seleccione...</option>
+                        <option value="Ingresos">Generar ingresos y sustento (Empleo)</option>
+                        <option value="Social">Sanar una aflicción social/comunitaria</option>
+                        <option value="Organizacion">Fortalecer al remanente (Organización/Iglesia)</option>
+                        <option value="Mixto">Combinar varios propósitos a la vez</option>
+                    </select>
+                </div>
+
+                <!-- Paso 3: Problema -->
+                <div class="step-container" id="step-3" data-title="El Árbol del Problema (Diagnóstico)">
+                    <h3 class="text-xl sm:text-2xl font-bold text-brand-blue mb-4 border-b-2 border-stone-100 pb-2"><i class="fa-solid fa-tree text-brand-gold mr-2"></i> 3. El Árbol del Problema</h3>
+                    <div class="bg-brand-light p-3 rounded text-sm text-brand-gold font-serif italic mb-4 shadow-sm border border-brand-gold/30">
+                        Para sanar la ciudad, primero debemos entender la raíz de sus males. Construyamos juntos el "Árbol del Problema".
+                    </div>
+
+                    <label class="label-text">1. EL TRONCO (El Problema Central): ¿Cuál es la necesidad principal o daño central que quieren resolver? <span class="text-red-500">*</span></label>
+                    <span class="help-text">Descríbelo como un estado negativo. Ej: "Alta desnutrición infantil" o "Falta de ingresos en familias productoras".</span>
+                    <textarea name="problema_central" class="input-field h-16" required placeholder="Escribe aquí el problema principal..."></textarea>
+
+                    <label class="label-text">2. LAS RAÍCES (Las Causas): ¿Por qué existe este problema? ¿Qué es lo que lo origina desde el fondo? <span class="text-red-500">*</span></label>
+                    <span class="help-text">Ej: "No hay fuentes de empleo local", "Falta acceso a agua potable", "Desconocimiento técnico".</span>
+                    <textarea name="problema_causas" class="input-field h-20" required placeholder="Enumera las causas principales que generan el problema..."></textarea>
+
+                    <label class="label-text">3. LAS RAMAS (Los Efectos): ¿Qué frutos amargos o consecuencias trae este problema a la comunidad en el día a día? <span class="text-red-500">*</span></label>
+                    <span class="help-text">Ej: "Enfermedades frecuentes en los niños", "Migración de los jóvenes a la ciudad", "Pobreza extrema".</span>
+                    <textarea name="problema_efectos" class="input-field h-20" required placeholder="Describe las consecuencias negativas..."></textarea>
+                </div>
+
+                <!-- Paso 4: Solución -->
+                <div class="step-container" id="step-4" data-title="El Árbol de Objetivos y Cronograma">
+                    <h3 class="text-xl sm:text-2xl font-bold text-brand-blue mb-4 border-b-2 border-stone-100 pb-2"><i class="fa-solid fa-seedling text-brand-gold mr-2"></i> 4. El Árbol de Objetivos y Cronograma</h3>
+                    <div class="bg-brand-light p-3 rounded text-sm text-brand-gold font-serif italic mb-4 shadow-sm border border-brand-gold/30">
+                        Ahora transformemos las ruinas en restauración. Convierte los elementos del paso anterior a positivo para trazar tu Plan de Acción.
+                    </div>
+
+                    <label class="label-text">1. EL OBJETIVO GENERAL (Tronco positivo): ¿Cuál es la meta principal de esta iniciativa? <span class="text-red-500">*</span></label>
+                    <span class="help-text">Convierte tu problema central a positivo. Ej: "Reducir la desnutrición infantil" o "Generar ingresos sostenibles".</span>
+                    <textarea name="objetivo_general" class="input-field h-16" required placeholder="El propósito principal del proyecto es..."></textarea>
+
+                    <label class="label-text">2. MEDIOS Y ACTIVIDADES (Raíces positivas): ¿Cuáles son las actividades clave que harán para solucionar las causas? <span class="text-red-500">*</span></label>
+                    <span class="help-text">Estas son tus actividades (lo que irás a costear en el presupuesto). Ej: "1. Crear huertas. 2. Capacitar madres. 3. Adecuar acueducto."</span>
+                    <textarea name="objetivo_medios" class="input-field h-24" required placeholder="Enumera el paso a paso de las actividades a realizar..."></textarea>
+
+                    <label class="label-text">3. LOS FINES (Ramas positivas): ¿Qué impacto o transformación esperan ver en la comunidad a futuro? <span class="text-red-500">*</span></label>
+                    <span class="help-text">Lo contrario a los efectos negativos. Ej: "Niños sanos estudiando", "Familias prósperas y unidas".</span>
+                    <textarea name="objetivo_fines" class="input-field h-16" required placeholder="Los beneficios e impactos a largo plazo serán..."></textarea>
+                    
+                    <label class="label-text mt-4">4. CRONOGRAMA DE EJECUCIÓN: ¿En cuánto tiempo estimado (en meses) se lograrán realizar las actividades listadas arriba? <span class="text-red-500">*</span></label>
+                    <input type="number" name="cronograma_meses" class="input-field" required min="1" placeholder="Ej: 6">
+                </div>
+
+                <!-- Paso 5: Población -->
+                <div class="step-container" id="step-5" data-title="Población Beneficiada">
+                    <h3 class="text-xl sm:text-2xl font-bold text-brand-blue mb-4 border-b-2 border-stone-100 pb-2"><i class="fa-solid fa-people-group text-brand-gold mr-2"></i> 5. La Población Beneficiada</h3>
+                    <p class="text-sm text-stone-500 mb-4 italic font-serif">"Nehemías organizó la reconstrucción asignando tareas a cada familia..." Queremos conocer quiénes serán los beneficiarios de tu proyecto.</p>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                            <label class="label-text">Cantidad estimada de personas beneficiadas DIRECTAMENTE <span class="text-red-500">*</span></label>
+                            <input type="number" name="poblacion_directa" class="input-field" required min="1">
+                        </div>
+                        <div>
+                            <label class="label-text">Cantidad estimada de familias o personas beneficiadas INDIRECTAMENTE</label>
+                            <input type="number" name="poblacion_indirecta" class="input-field" min="0">
+                        </div>
+                    </div>
+
+                    <label class="label-text">¿Quiénes conforman este grupo principalmente? (Niños, viudas, productores, etnias, etc.) <span class="text-red-500">*</span></label>
+                    <textarea name="poblacion_quienes" class="input-field h-16" required></textarea>
+
+                    <label class="label-text">¿Qué aflicciones o vulnerabilidades particulares tiene este pueblo? <span class="text-red-500">*</span></label>
+                    <textarea name="poblacion_caracteristicas" class="input-field h-20" required placeholder="Ej: Son familias desplazadas, mujeres cabeza de hogar, jóvenes sin oportunidades..."></textarea>
+
+                    <label class="label-text">¿Cómo nos aseguramos de que los más débiles y marginados no queden por fuera de la bendición?</label>
+                    <textarea name="poblacion_inclusion" class="input-field h-16"></textarea>
+                </div>
+
+                <!-- Paso 6: Información Específica (Dinámica) -->
+                <div class="step-container" id="step-6" data-title="Los Detalles del Muro (Información Técnica)">
+                    <h3 class="text-xl sm:text-2xl font-bold text-brand-blue mb-4 border-b-2 border-stone-100 pb-2"><i class="fa-solid fa-compass-drafting text-brand-gold mr-2"></i> 6. Detalles de la Construcción</h3>
+                    <div id="dynamic-fields-container">
+                        <p class="text-stone-500 italic">Por favor, selecciona la naturaleza de la obra en la Etapa 2 para ver los detalles específicos requeridos.</p>
+                    </div>
+
+                    <!-- Plantillas ocultas para JS -->
+                    <template id="tpl-negocio">
+                        <div class="bg-amber-50/50 p-4 rounded-lg border-l-4 border-brand-gold space-y-4">
+                            <h4 class="font-bold text-brand-blue"><i class="fa-solid fa-store"></i> Perfil de Negocio/Emprendimiento</h4>
+                            <div>
+                                <label class="label-text">¿Qué producto o servicio ofrecerán y quiénes serán sus compradores? *</label>
+                                <textarea name="esp_neg_producto" class="input-field h-16" required></textarea>
+                            </div>
+                            <div>
+                                <label class="label-text">¿Qué herramientas, materias primas y equipos necesitan principalmente? *</label>
+                                <textarea name="esp_neg_recursos" class="input-field h-16" required></textarea>
+                            </div>
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <div>
+                                    <label class="label-text">Precio de venta estimado (o "Aún no sé")</label>
+                                    <input type="text" name="esp_neg_precio" class="input-field">
+                                </div>
+                                <div>
+                                    <label class="label-text">Ventas mensuales esperadas</label>
+                                    <input type="text" name="esp_neg_ventas" class="input-field">
+                                </div>
+                            </div>
+                            <div>
+                                <label class="label-text">¿Existe competencia o "mercaderes" similares? ¿Por qué la gente los preferiría a ustedes?</label>
+                                <textarea name="esp_neg_competencia" class="input-field h-16"></textarea>
+                            </div>
+                        </div>
+                    </template>
+
+                    <template id="tpl-social">
+                        <div class="bg-blue-50/50 p-4 rounded-lg border-l-4 border-brand-blue space-y-4">
+                            <h4 class="font-bold text-brand-blue"><i class="fa-solid fa-hands-holding-circle"></i> Perfil Proyecto Social/Comunitario</h4>
+                            <div>
+                                <label class="label-text">¿Qué transformación en el corazón o en la sociedad esperan ver al final? *</label>
+                                <textarea name="esp_soc_cambio" class="input-field h-16" required></textarea>
+                            </div>
+                            <div>
+                                <label class="label-text">¿Qué otras autoridades u organizaciones (iglesias, alcaldía) podrían sumar fuerzas?</label>
+                                <textarea name="esp_soc_aliados" class="input-field h-16"></textarea>
+                            </div>
+                            <div>
+                                <label class="label-text">¿Cómo sabremos si la obra está dando buen fruto? (Indicadores/Medición)</label>
+                                <textarea name="esp_soc_medicion" class="input-field h-16"></textarea>
+                            </div>
+                        </div>
+                    </template>
+
+                    <template id="tpl-agro">
+                        <div class="bg-green-50/50 p-4 rounded-lg border-l-4 border-green-700 space-y-4">
+                            <h4 class="font-bold text-green-900"><i class="fa-solid fa-seedling"></i> Perfil de la Tierra (Agropecuario)</h4>
+                            <div>
+                                <label class="label-text">¿Tienen heredad (terreno) propio o arrendado? Describe el área y las fuentes de agua. *</label>
+                                <textarea name="esp_agr_terreno" class="input-field h-16" required></textarea>
+                            </div>
+                            <div>
+                                <label class="label-text">¿Cuál es el tiempo de la cosecha/cría y qué simiente o insumos se requieren? *</label>
+                                <textarea name="esp_agr_ciclo" class="input-field h-16" required></textarea>
+                            </div>
+                            <div>
+                                <label class="label-text">¿Cómo planean transportar y llevar el fruto al mercado?</label>
+                                <textarea name="esp_agr_comercializacion" class="input-field h-16"></textarea>
+                            </div>
+                        </div>
+                    </template>
+
+                    <template id="tpl-aguasalud">
+                        <div class="bg-cyan-50/50 p-4 rounded-lg border-l-4 border-cyan-600 space-y-4">
+                            <h4 class="font-bold text-cyan-900"><i class="fa-solid fa-faucet-drip"></i> Perfil de Aguas y Sanidad</h4>
+                            <div>
+                                <label class="label-text">¿En qué estado están los pozos, cañerías o infraestructura existente? *</label>
+                                <textarea name="esp_sal_infra" class="input-field h-16" required></textarea>
+                            </div>
+                            <div>
+                                <label class="label-text">¿Hay en el pueblo personas sabias e instruidas para mantener y operar esta solución? *</label>
+                                <textarea name="esp_sal_personal" class="input-field h-16" required></textarea>
+                            </div>
+                            <div>
+                                <label class="label-text">¿Se ha hablado de esto con los gobernadores o autoridades de sanidad pública?</label>
+                                <textarea name="esp_sal_autoridades" class="input-field h-16"></textarea>
+                            </div>
+                        </div>
+                    </template>
+                </div>
+
+                <!-- Paso 7: Presupuesto -->
+                <div class="step-container" id="step-7" data-title="Presupuesto Estimado">
+                    <h3 class="text-xl sm:text-2xl font-bold text-brand-blue mb-2 border-b-2 border-stone-100 pb-2"><i class="fa-solid fa-coins text-brand-gold mr-2"></i> 7. Presupuesto Estimado (La Provisión)</h3>
+                    <p class="text-sm text-stone-600 mb-4 italic">Revisa las "Actividades" que escribiste en el Paso 4 y estima qué recursos necesitas para cumplirlas, diferenciando el esfuerzo propio de tu comunidad y el apoyo que solicitas.</p>
+
+                    <div class="overflow-x-auto rounded-lg border border-stone-300 shadow-sm mb-4">
+                        <table class="w-full text-sm text-left text-stone-700 min-w-[700px]" id="budget-table">
+                            <thead class="text-xs text-brand-blue uppercase bg-stone-100 border-b border-stone-300">
+                                <tr>
+                                    <th class="px-3 py-3 w-1/4">Concepto (Materiales, equipos, labor)</th>
+                                    <th class="px-3 py-3 w-16 text-center">Cant.</th>
+                                    <th class="px-3 py-3 text-right">Costo Unit. ($)</th>
+                                    <th class="px-3 py-3 bg-amber-50 text-right">Esfuerzo del Pueblo ($)</th>
+                                    <th class="px-3 py-3 bg-blue-50 text-right">Provisión Solicitada ($)</th>
+                                    <th class="px-3 py-3 text-right font-bold">Costo Total ($)</th>
+                                    <th class="px-2 py-3"></th>
+                                </tr>
+                            </thead>
+                            <tbody id="budget-body">
+                                <!-- Filas generadas por JS -->
+                            </tbody>
+                        </table>
+                    </div>
+                    
+                    <button type="button" onclick="addBudgetRow()" class="mb-6 text-brand-gold font-bold text-sm hover:text-amber-700 flex items-center gap-1 transition-colors">
+                        <i class="fa-solid fa-plus-circle"></i> Agregar otro recurso necesario
+                    </button>
+
+                    <div class="bg-stone-100 p-4 rounded-xl shadow-inner flex flex-col md:flex-row justify-between items-center gap-4 border border-stone-200">
+                        <div class="text-center md:text-left">
+                            <span class="block text-xs text-stone-500 uppercase font-bold">Aporte Comunitario</span>
+                            <span class="text-xl font-bold text-brand-gold" id="lbl-total-propio">$0</span>
+                        </div>
+                        <div class="text-center md:text-left">
+                            <span class="block text-xs text-stone-500 uppercase font-bold">Provisión Solicitada</span>
+                            <span class="text-xl font-bold text-brand-blue" id="lbl-total-solicitado">$0</span>
+                        </div>
+                        <div class="text-center md:text-left bg-white px-4 py-2 rounded-lg border border-stone-300 shadow-sm">
+                            <span class="block text-xs text-stone-700 uppercase font-bold">Valor Total de la Obra</span>
+                            <span class="text-2xl font-black text-gray-900" id="lbl-total-proyecto">$0</span>
+                        </div>
+                    </div>
+                    
+                    <input type="hidden" name="presupuesto_total_propio" id="in_total_propio" value="0">
+                    <input type="hidden" name="presupuesto_total_solicitado" id="in_total_solicitado" value="0">
+                    <input type="hidden" name="presupuesto_total_proyecto" id="in_total_proyecto" value="0">
+                </div>
+
+                <!-- Paso 8: Tiempo y Riesgos -->
+                <div class="step-container" id="step-8" data-title="Sostenibilidad y Riesgos">
+                    <h3 class="text-xl sm:text-2xl font-bold text-brand-blue mb-4 border-b-2 border-stone-100 pb-2"><i class="fa-solid fa-shield-halved text-brand-gold mr-2"></i> 8. Sostenibilidad y Riesgos de la Obra</h3>
+                    <p class="text-sm text-stone-600 mb-4 italic font-serif">"Los que edificaban... con una mano trabajaban en la obra, y en la otra tenían la espada." Es vital planificar cómo defender y sostener el proyecto a futuro.</p>
+
+                    <label class="label-text">¿Cuándo tienen disposición de iniciar con el cronograma planteado?</label>
+                    <input type="text" name="tiempo_inicio" class="input-field" placeholder="Ej: En 3 meses, Inmediatamente">
+
+                    <label class="label-text">¿Qué obstáculos o riesgos (clima, conflictos, inflación, falta de permisos) podrían amenazar el proyecto? <span class="text-red-500">*</span></label>
+                    <span class="help-text">Identifica los posibles problemas que podrían retrasar las actividades.</span>
+                    <textarea name="riesgos_identificados" class="input-field h-20" required placeholder="Ej: Las lluvias inundan los caminos en invierno, los precios de los abonos suben mucho..."></textarea>
+
+                    <label class="label-text">¿Cómo se sostendrá el proyecto económicamente una vez se acabe el dinero de apoyo inicial? <span class="text-red-500">*</span></label>
+                    <span class="help-text">¿La organización aportará cuotas mensuales? ¿Generará ingresos por ventas para reinvertir?</span>
+                    <textarea name="sostenibilidad_plan" class="input-field h-24" required></textarea>
+
+                    <label class="label-text">¿A quién se delegará la administración y el mantenimiento de los equipos o instalaciones hacia el futuro? <span class="text-red-500">*</span></label>
+                    <input type="text" name="sostenibilidad_admin" class="input-field" required placeholder="Ej: Se nombrará un comité de tesorería y un fontanero oficial.">
+                </div>
+
+                <!-- Paso 9: Evidencias -->
+                <div class="step-container" id="step-9" data-title="Las Cartas de Respaldo (Evidencias)">
+                    <h3 class="text-xl sm:text-2xl font-bold text-brand-blue mb-4 border-b-2 border-stone-100 pb-2"><i class="fa-solid fa-envelope-open-text text-brand-gold mr-2"></i> 9. Las Cartas de Respaldo (Evidencias)</h3>
+                    
+                    <div class="bg-blue-50 border border-blue-200 p-4 rounded-lg mb-6 text-sm text-blue-900 shadow-sm">
+                        <i class="fa-solid fa-dove text-brand-blue mr-2"></i> 
+                        <strong>Mensajería Segura:</strong> Para proteger tu conexión, los archivos pesados (fotos de las ruinas, cotizaciones de la madera) no se envían automáticamente por aquí.
+                        <br><br>
+                        Si tienes imágenes o documentos que respaldan tu visión, <strong>por favor envíalos directamente a nuestro chat de WhatsApp</strong> después de generar tu reporte final.
+                    </div>
+
+                    <label class="label-text">¿Tienes fotos, planos o cartas de la comunidad listas para enviar por WhatsApp?</label>
+                    <select name="evidencias_disponibles" class="input-field">
+                        <option value="No">Aún no, las prepararé luego</option>
+                        <option value="Sí, fotos">Sí, tengo fotografías del lugar/problema</option>
+                        <option value="Sí, documentos">Sí, tengo cotizaciones o cartas de la congregación</option>
+                        <option value="Sí, ambos">Sí, poseo fotos y documentos</option>
+                    </select>
+
+                    <label class="label-text">Describe brevemente de qué evidencias dispones:</label>
+                    <input type="text" name="evidencias_descripcion" class="input-field" placeholder="Ej: 3 fotos de la cañería rota y 1 presupuesto del ferretero">
+                </div>
+
+                <!-- Paso 10: Consentimiento y Envío -->
+                <div class="step-container" id="step-10" data-title="El Pacto (Autorización y Envío)">
+                    <h3 class="text-xl sm:text-2xl font-bold text-brand-blue mb-4 border-b-2 border-stone-100 pb-2"><i class="fa-solid fa-handshake-simple text-brand-gold mr-2"></i> 10. El Pacto y el Envío</h3>
+
+                    <div class="bg-stone-50 p-4 rounded-lg text-sm mb-6 max-h-48 overflow-y-auto border border-stone-300">
+                        <strong>Acuerdo de Transparencia y Tratamiento de Datos:</strong><br><br>
+                        Al marcar la casilla inferior, sella este acuerdo autorizando voluntariamente a la <strong>Fundación Social Salud Hoy al Alcance de Todos</strong> para conocer, resguardar y tratar la información proporcionada en esta visión.<br><br>
+                        <strong>Propósito:</strong> Tus palabras serán utilizadas exclusivamente para entender, evaluar de manera preliminar y dar acompañamiento a la obra descrita, contactándote para fortalecer el proyecto.<br><br>
+                        <strong>Tus Derechos:</strong> Podrás modificar o retirar tu propuesta comunicándote con nosotros, en obediencia a la Ley 1581 de 2012 de Colombia.<br><br>
+                        <em>Recuerda: Este registro es un paso de fe y organización. No constituye una promesa irrevocable de entrega de recursos, sino el compromiso de analizar juntos la viabilidad de la obra.</em>
+                    </div>
+
+                    <label class="flex items-start gap-3 cursor-pointer p-4 border-2 border-stone-200 rounded-xl bg-white hover:bg-stone-50 transition-colors mb-6 shadow-sm">
+                        <input type="checkbox" id="consentimiento" class="mt-1 w-5 h-5 text-brand-gold border-stone-300 rounded focus:ring-brand-gold">
+                        <span class="text-sm text-stone-700 font-medium">He leído el acuerdo, doy mi consentimiento para el uso de esta información y comprendo que este es un registro preliminar para estructurar la obra, sin garantizar financiación inmediata.</span>
+                    </label>
+
+                    <div class="border-t-2 border-brand-gold pt-6 mt-6">
+                        <p class="text-center text-brand-blue text-lg font-bold mb-6 font-serif">"El Dios de los cielos, él nos prosperará, y nosotros sus siervos nos levantaremos y edificaremos."</p>
+                        
+                        <!-- Acciones finales -->
+                        <div class="flex flex-col gap-3">
+                            <button type="button" onclick="prepareFinalReport()" class="w-full bg-brand-blue hover:bg-blue-800 text-white font-bold py-4 px-4 rounded-xl shadow-lg transition-transform transform hover:scale-[1.02] flex items-center justify-center gap-3 text-lg">
+                                <i class="fa-brands fa-whatsapp text-2xl"></i> Enviar mi Visión a la Fundación
+                            </button>
+                            
+                            <div class="flex gap-3">
+                                <button type="button" onclick="downloadPDFReport()" class="w-1/2 bg-white border-2 border-brand-gold text-brand-gold hover:bg-amber-50 font-bold py-3 px-4 rounded-xl transition-colors flex items-center justify-center gap-2">
+                                    <i class="fa-solid fa-scroll"></i> Descargar los Planos (PDF)
+                                </button>
+                                <button type="button" onclick="exportDraftToFile()" class="w-1/2 bg-stone-100 hover:bg-stone-200 text-stone-700 border border-stone-300 font-bold py-3 px-4 rounded-xl transition-colors flex items-center justify-center gap-2">
+                                    <i class="fa-solid fa-box-archive"></i> Guardar Archivo de Seguridad
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Controles de navegación -->
+                <div class="flex justify-between mt-10 pt-4 border-t border-stone-200" id="nav-buttons">
+                    <button type="button" id="btn-prev" onclick="prevStep()" class="hidden bg-white border-2 border-stone-300 hover:bg-stone-50 text-stone-600 font-bold py-2 px-6 rounded-lg transition-colors">
+                        <i class="fa-solid fa-arrow-left mr-2"></i> Volver atrás
+                    </button>
+                    <div class="flex-grow"></div>
+                    <button type="button" id="btn-next" onclick="nextStep()" class="bg-brand-gold hover:bg-amber-700 text-white font-bold py-2 px-8 rounded-lg shadow-md transition-colors text-lg">
+                        Avanzar <i class="fa-solid fa-arrow-right ml-2"></i>
+                    </button>
+                </div>
+
+            </form>
+        </div>
+    </main>
+
+    <!-- Div Oculto para Renderizar PDF Completo -->
+    <div id="pdf-container" style="display:none;">
+        <div id="report-content">
+            <div style="text-align: center; margin-bottom: 20px; border-bottom: 3px solid #b45309; padding-bottom: 15px;">
+                <img src="https://i.postimg.cc/1zGKLz1g/14.png" style="height: 90px; margin: 0 auto;">
+                <h1 style="color: #1e3a8a; margin-top: 15px; font-size: 24px;">DOCUMENTO DE REEDIFICACIÓN COMUNITARIA</h1>
+                <p style="color: #44403c; font-style: italic;">Fundación Social Salud Hoy al Alcance de Todos</p>
+                <p style="font-size: 12px; color: #78716c; font-family: 'Inter', sans-serif;">Día de registro: <span id="pdf-fecha"></span></p>
+            </div>
+            
+            <div id="pdf-body">
+                <!-- El contenido se inyectará dinámicamente -->
+            </div>
+            
+            <div style="margin-top: 40px; padding-top: 20px; border-top: 1px solid #d6d3d1; font-size: 10px; color: #78716c; text-align: center; font-family: 'Inter', sans-serif;">
+                "Levantémonos y edifiquemos". Documento generado a través de la plataforma de recepción preliminar. Sujeto a evaluación, estructuración técnica y disponibilidad de recursos.
+            </div>
+        </div>
+    </div>
+
+
+    <script>
+        // Configuración Institucional
+        const WHATSAPP_NUMBER = "573042908325";
+
+        // Variables de estado
+        let currentStep = 1;
+        const totalSteps = 10;
+        let formData = {};
+        let budgetItems = [];
+
+        // Inicialización
+        document.addEventListener('DOMContentLoaded', () => {
+            loadDraft();
+            if(budgetItems.length === 0) {
+                addBudgetRow();
+            }
+            updateUI();
+        });
+
+        // Mostrar formulario
+        function startForm() {
+            document.getElementById('hero-section').style.display = 'none';
+            document.getElementById('form-section').style.display = 'block';
+            window.scrollTo(0, 0);
+        }
+
+        // Mostrar Ayuda
+        function showHelp() {
+            showToast("Esta herramienta está inspirada en cómo Nehemías planificó la reconstrucción. Solo responde las preguntas paso a paso para ayudarnos a entender la aflicción de tu comunidad y tu plan para restaurarla. Al final, se generarán tus planos (PDF) y el mensaje para la Fundación.", 'info', 8000);
+        }
+
+        // Navegación
+        function updateUI() {
+            document.querySelectorAll('.step-container').forEach((el, index) => {
+                if (index + 1 === currentStep) {
+                    el.classList.add('active');
+                    document.getElementById('step-title-display').innerText = el.getAttribute('data-title');
+                } else {
+                    el.classList.remove('active');
+                }
+            });
+
+            const progress = ((currentStep) / totalSteps) * 100;
+            document.getElementById('progress-bar').style.width = `${progress}%`;
+            document.getElementById('step-indicator').innerText = `Etapa ${currentStep} de ${totalSteps}`;
+
+            const btnPrev = document.getElementById('btn-prev');
+            const btnNext = document.getElementById('btn-next');
+
+            btnPrev.style.display = currentStep === 1 ? 'none' : 'block';
+            btnNext.style.display = currentStep === totalSteps ? 'none' : 'block';
+            
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function nextStep() {
+            if (validateCurrentStep()) {
+                saveDataToMemory();
+                if (currentStep < totalSteps) {
+                    currentStep++;
+                    updateUI();
+                    saveDraftSilently();
+                }
+            }
+        }
+
+        function prevStep() {
+            if (currentStep > 1) {
+                saveDataToMemory();
+                currentStep--;
+                updateUI();
+            }
+        }
+
+        // Validación
+        function validateCurrentStep() {
+            const stepEl = document.getElementById(`step-${currentStep}`);
+            const inputs = stepEl.querySelectorAll('input[required], select[required], textarea[required]');
+            let isValid = true;
+            
+            stepEl.querySelectorAll('.error-msg').forEach(el => el.remove());
+            inputs.forEach(el => el.classList.remove('border-red-500', 'bg-red-50'));
+
+            inputs.forEach(input => {
+                if(input.offsetParent === null) return; 
+
+                if (!input.value.trim()) {
+                    isValid = false;
+                    input.classList.add('border-red-500', 'bg-red-50');
+                    const error = document.createElement('span');
+                    error.className = 'error-msg text-xs text-red-500 mt-1 block font-bold';
+                    error.innerText = 'Falta este dato para continuar la obra';
+                    input.parentNode.insertBefore(error, input.nextSibling);
+                }
+            });
+
+            if (!isValid) {
+                showToast("Por favor, completa los campos requeridos señalados en rojo.", "error");
+            }
+
+            if (currentStep === 10 && isValid) {
+                const terms = document.getElementById('consentimiento');
+                if (!terms.checked) {
+                    showToast("Debes aceptar el pacto de transparencia y datos para enviar la propuesta.", "error");
+                    isValid = false;
+                }
+            }
+
+            return isValid;
+        }
+
+        // Lógica Dinámica
+        function toggleOrgFields(value) {
+            const orgFields = document.getElementById('org-fields');
+            if (value === 'Organización') {
+                orgFields.classList.remove('hidden');
+            } else {
+                orgFields.classList.add('hidden');
+                document.querySelector('input[name="org_nombre"]').value = '';
+                document.querySelector('input[name="org_cargo"]').value = '';
+                document.querySelector('select[name="org_legal"]').value = '';
+            }
+        }
+
+        function updateDynamicForms() {
+            const category = document.getElementById('categoria_principal').value;
+            const container = document.getElementById('dynamic-fields-container');
+            container.innerHTML = ''; 
+            
+            let templateId = '';
+            if (category === 'Negocio') templateId = 'tpl-negocio';
+            else if (category === 'Social') templateId = 'tpl-social';
+            else if (category === 'Agro') templateId = 'tpl-agro';
+            else if (category === 'AguaSalud') templateId = 'tpl-aguasalud';
+
+            if (templateId) {
+                const template = document.getElementById(templateId);
+                const clone = template.content.cloneNode(true);
+                container.appendChild(clone);
+            } else {
+                container.innerHTML = '<p class="text-stone-500 italic">No hay detalles técnicos extra para esta categoría. Puedes continuar edificando.</p>';
+            }
+        }
+
+        // Presupuesto
+        function addBudgetRow(data = null) {
+            const tbody = document.getElementById('budget-body');
+            const rowId = 'row-' + Date.now();
+            const tr = document.createElement('tr');
+            tr.id = rowId;
+            tr.className = "bg-white border-b hover:bg-stone-50 transition-colors";
+            
+            const concepto = data ? data.concepto : '';
+            const cant = data ? data.cant : '1';
+            const cost = data ? data.cost : '0';
+            const propio = data ? data.propio : '0';
+            const sol = data ? data.sol : '0';
+
+            tr.innerHTML = `
+                <td class="px-2 py-2"><input type="text" class="w-full border-stone-300 border p-1 rounded text-sm b-concepto bg-transparent" placeholder="Ej: Vigas de madera" value="${concepto}"></td>
+                <td class="px-2 py-2"><input type="number" class="w-full border-stone-300 border p-1 rounded text-sm text-center b-cant bg-transparent" min="1" value="${cant}" onchange="calcRow('${rowId}')"></td>
+                <td class="px-2 py-2"><input type="number" class="w-full border-stone-300 border p-1 rounded text-sm text-right b-cost bg-transparent" min="0" value="${cost}" onchange="calcRow('${rowId}')"></td>
+                <td class="px-2 py-2"><input type="number" class="w-full border-amber-300 border p-1 rounded text-sm text-right bg-amber-50 b-propio text-amber-900 font-bold" min="0" value="${propio}" onchange="calcRow('${rowId}', 'propio')"></td>
+                <td class="px-2 py-2"><input type="number" class="w-full border-blue-300 border p-1 rounded text-sm text-right bg-blue-50 b-sol text-blue-900 font-bold" min="0" value="${sol}" onchange="calcRow('${rowId}', 'sol')"></td>
+                <td class="px-2 py-2 text-right font-bold text-stone-700 b-total">0</td>
+                <td class="px-2 py-2 text-center">
+                    <button type="button" onclick="removeBudgetRow('${rowId}')" class="text-red-500 hover:text-red-700"><i class="fa-solid fa-trash-can"></i></button>
+                </td>
+            `;
+            tbody.appendChild(tr);
+            if(data) calcRow(rowId);
+        }
+
+        function removeBudgetRow(rowId) {
+            const tr = document.getElementById(rowId);
+            if (tr) {
+                tr.remove();
+                calculateGrandTotals();
+            }
+        }
+
+        function calcRow(rowId, trigger = null) {
+            const tr = document.getElementById(rowId);
+            if (!tr) return;
+
+            const cant = parseFloat(tr.querySelector('.b-cant').value) || 0;
+            const cost = parseFloat(tr.querySelector('.b-cost').value) || 0;
+            const totalFila = cant * cost;
+            
+            const inPropio = tr.querySelector('.b-propio');
+            const inSol = tr.querySelector('.b-sol');
+            
+            let propio = parseFloat(inPropio.value) || 0;
+            let sol = parseFloat(inSol.value) || 0;
+
+            if (trigger === 'propio') {
+                sol = totalFila > propio ? totalFila - propio : 0;
+                inSol.value = sol;
+            } else if (trigger === 'sol') {
+                propio = totalFila > sol ? totalFila - sol : 0;
+                inPropio.value = propio;
+            } else {
+                sol = totalFila - propio;
+                if(sol < 0) { propio = totalFila; sol = 0; inPropio.value = propio; }
+                inSol.value = sol;
+            }
+
+            tr.querySelector('.b-total').innerText = formatCurrency(totalFila);
+            calculateGrandTotals();
+        }
+
+        function calculateGrandTotals() {
+            let totalPropio = 0, totalSol = 0, totalProy = 0;
+            
+            document.querySelectorAll('#budget-body tr').forEach(tr => {
+                totalPropio += parseFloat(tr.querySelector('.b-propio').value) || 0;
+                totalSol += parseFloat(tr.querySelector('.b-sol').value) || 0;
+                const cant = parseFloat(tr.querySelector('.b-cant').value) || 0;
+                const cost = parseFloat(tr.querySelector('.b-cost').value) || 0;
+                totalProy += (cant * cost);
+            });
+
+            document.getElementById('lbl-total-propio').innerText = formatCurrency(totalPropio);
+            document.getElementById('lbl-total-solicitado').innerText = formatCurrency(totalSol);
+            document.getElementById('lbl-total-proyecto').innerText = formatCurrency(totalProy);
+
+            document.getElementById('in_total_propio').value = totalPropio;
+            document.getElementById('in_total_solicitado').value = totalSol;
+            document.getElementById('in_total_proyecto').value = totalProy;
+        }
+
+        function formatCurrency(val) { return '$' + val.toLocaleString('es-CO'); }
+
+        // Manejo de Datos y Archivos
+        function saveDataToMemory() {
+            const form = document.getElementById('initiative-form');
+            const fd = new FormData(form);
+            for (let [key, value] of fd.entries()) {
+                formData[key] = value;
+            }
+            const selCat = document.getElementById('categoria_principal');
+            formData['categoria_principal_texto'] = selCat.options[selCat.selectedIndex].text;
+            
+            budgetItems = [];
+            document.querySelectorAll('#budget-body tr').forEach(tr => {
+                const c = tr.querySelector('.b-concepto').value;
+                if(c.trim() !== '') {
+                    budgetItems.push({
+                        concepto: c,
+                        cant: tr.querySelector('.b-cant').value,
+                        cost: tr.querySelector('.b-cost').value,
+                        propio: tr.querySelector('.b-propio').value,
+                        sol: tr.querySelector('.b-sol').value
+                    });
+                }
+            });
+        }
+
+        function saveDraftSilently() {
+            saveDataToMemory();
+            localStorage.setItem('fssh_nehemias_draft', JSON.stringify({ formData, budgetItems, step: currentStep }));
+        }
+
+        function saveDraftAlert() {
+            saveDraftSilently();
+            showToast("Progreso guardado en el dispositivo. ¡La obra no se detiene!", "success");
+        }
+
+        function exportDraftToFile() {
+            saveDataToMemory();
+            const draft = { formData, budgetItems, step: currentStep, timestamp: new Date().toISOString() };
+            const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(draft));
+            const downloadAnchorNode = document.createElement('a');
+            downloadAnchorNode.setAttribute("href", dataStr);
+            
+            let nombre = formData['iniciativa_nombre'] ? formData['iniciativa_nombre'].replace(/[^a-z0-9]/gi, '_').toLowerCase() : 'proyecto_nehemias';
+            downloadAnchorNode.setAttribute("download", `planos_obra_${nombre}.json`);
+            
+            document.body.appendChild(downloadAnchorNode);
+            downloadAnchorNode.click();
+            downloadAnchorNode.remove();
+            showToast("Planos descargados. Guárdalos bien como un registro de tu visión.", "success", 6000);
+        }
+
+        function handleFileUpload(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                try {
+                    const draft = JSON.parse(e.target.result);
+                    if (draft && typeof draft === 'object' && 'formData' in draft) {
+                        applyDraftData(draft);
+                        showToast("Planos cargados correctamente. Puedes continuar estructurando la obra.", "success");
+                        startForm();
+                    } else {
+                        showToast("Este pergamino (archivo) no parece ser de esta plataforma.", "error");
+                    }
+                } catch (error) {
+                    showToast("Error al leer los documentos. Asegúrate de cargar un archivo (.json) válido.", "error");
+                }
+            };
+            reader.readAsText(file);
+            event.target.value = ''; 
+        }
+
+        function applyDraftData(draft) {
+            formData = draft.formData || {};
+            budgetItems = draft.budgetItems || [];
+            currentStep = draft.step < 10 ? draft.step : 9; 
+
+            Object.keys(formData).forEach(key => {
+                const el = document.querySelector(`[name="${key}"]`);
+                if (el) el.value = formData[key];
+            });
+
+            const catEl = document.getElementById('categoria_principal');
+            if(catEl.value) updateDynamicForms();
+            
+            const repEl = document.querySelector('[name="proponente_tipo_representacion"]');
+            if(repEl.value) toggleOrgFields(repEl.value);
+
+            setTimeout(() => {
+                Object.keys(formData).forEach(key => {
+                    if(key.startsWith('esp_')) {
+                        const el = document.querySelector(`[name="${key}"]`);
+                        if (el) el.value = formData[key];
+                    }
+                });
+            }, 100);
+
+            const tbody = document.getElementById('budget-body');
+            tbody.innerHTML = '';
+            if(budgetItems.length > 0) {
+                budgetItems.forEach(item => addBudgetRow(item));
+            } else {
+                addBudgetRow();
+            }
+            
+            updateUI();
+            calculateGrandTotals();
+        }
+
+        function loadDraft() {
+            const saved = localStorage.getItem('fssh_nehemias_draft');
+            if (saved) {
+                try {
+                    applyDraftData(JSON.parse(saved));
+                    showToast("Hemos recuperado la información donde la dejaste la última vez.", "info");
+                } catch (e) {}
+            }
+        }
+
+        function showToast(msg, type = 'info', duration = 3000) {
+            const container = document.getElementById('msg-container');
+            container.innerText = msg;
+            container.className = `mb-4 p-4 rounded-lg text-sm font-medium transition-all block border-l-4`;
+            if (type === 'error') container.classList.add('bg-red-50', 'text-red-900', 'border-red-600', 'shadow-sm');
+            else if (type === 'success') container.classList.add('bg-green-50', 'text-green-900', 'border-green-600', 'shadow-sm');
+            else container.classList.add('bg-blue-50', 'text-blue-900', 'border-brand-blue', 'shadow-sm');
+            
+            setTimeout(() => { container.style.display = 'none'; }, duration);
+        }
+
+        // Generación de Informes
+        function buildComprehensiveHTML() {
+            saveDataToMemory();
+            document.getElementById('pdf-fecha').innerText = new Date().toLocaleDateString('es-CO');
+            
+            const addSection = (title, dataArray) => {
+                let html = `<div class="pdf-section"><h2>${title}</h2><div style="margin-left: 10px;">`;
+                dataArray.forEach(item => {
+                    const val = formData[item.key] || 'N/A';
+                    if (val !== 'N/A' && val !== '') {
+                        html += `<p style="margin-bottom: 8px;"><strong>${item.label}:</strong><br> <span style="color:#44403c;">${val.replace(/\n/g, '<br>')}</span></p>`;
+                    }
+                });
+                html += `</div></div>`;
+                return html;
+            };
+
+            let fullHtml = addSection('I. El Líder y la Comunidad (Proponente)', [
+                {key: 'proponente_nombre', label: 'Líder del Proyecto'},
+                {key: 'proponente_whatsapp', label: 'Contacto (WhatsApp)'},
+                {key: 'proponente_municipio', label: 'Territorio (Municipio)'},
+                {key: 'proponente_departamento', label: 'Departamento'},
+                {key: 'proponente_comunidad', label: 'Sector / Congregación'},
+                {key: 'proponente_tipo_representacion', label: 'Naturaleza de Representación'},
+                {key: 'org_nombre', label: 'Grupo u Organización'},
+                {key: 'org_cargo', label: 'Cargo en la comunidad'},
+                {key: 'iniciativa_nombre', label: 'Título de la Visión/Obra'},
+                {key: 'categoria_principal_texto', label: 'Naturaleza de la Obra'},
+                {key: 'iniciativa_etapa', label: 'Estado Actual'},
+                {key: 'iniciativa_objetivo', label: 'Objetivo Mayor'}
+            ]);
+
+            fullHtml += addSection('II. El Árbol del Problema', [
+                {key: 'problema_central', label: 'Tronco: Problema Central'},
+                {key: 'problema_causas', label: 'Raíces: Causas Principales'},
+                {key: 'problema_efectos', label: 'Ramas: Efectos y Consecuencias'}
+            ]);
+
+            fullHtml += addSection('III. El Árbol de Objetivos y Cronograma', [
+                {key: 'objetivo_general', label: 'Objetivo General (Tronco positivo)'},
+                {key: 'objetivo_medios', label: 'Medios y Actividades (Plan de Acción)'},
+                {key: 'objetivo_fines', label: 'Fines e Impacto Esperado'},
+                {key: 'cronograma_meses', label: 'Duración del Cronograma (Meses)'}
+            ]);
+
+            fullHtml += addSection('IV. Población Beneficiada', [
+                {key: 'poblacion_directa', label: 'Beneficiarios Directos'},
+                {key: 'poblacion_indirecta', label: 'Beneficiarios Indirectos'},
+                {key: 'poblacion_quienes', label: 'Características de la Población'},
+                {key: 'poblacion_caracteristicas', label: 'Vulnerabilidades y Condiciones'}
+            ]);
+
+            let specificDataHtml = '<div class="pdf-section"><h2>V. Detalles de la Edificación (Técnicos)</h2><div style="margin-left:10px;">';
+            let hasSpecific = false;
+            Object.keys(formData).forEach(key => {
+                if(key.startsWith('esp_') && formData[key].trim() !== '') {
+                    hasSpecific = true;
+                    let label = key.replace('esp_neg_', '').replace('esp_soc_', '').replace('esp_agr_', '').replace('esp_sal_', '').toUpperCase();
+                    specificDataHtml += `<p style="margin-bottom: 8px;"><strong>${label}:</strong><br> <span style="color:#44403c;">${formData[key].replace(/\n/g, '<br>')}</span></p>`;
+                }
+            });
+            specificDataHtml += '</div></div>';
+            if(hasSpecific) fullHtml += specificDataHtml;
+
+            fullHtml += `<div class="pdf-section"><h2>VI. La Provisión Requerida (Presupuesto)</h2>`;
+            let tableHtml = `<table><thead><tr><th>Concepto/Material</th><th>Cant</th><th>V.Unit</th><th>Aporte Comunitario</th><th>Provisión Solicitada</th><th>Total</th></tr></thead><tbody>`;
+            budgetItems.forEach(item => {
+                let tot = (parseFloat(item.cant)*parseFloat(item.cost));
+                tableHtml += `<tr><td>${item.concepto}</td><td>${item.cant}</td>
+                    <td>${formatCurrency(parseFloat(item.cost))}</td>
+                    <td>${formatCurrency(parseFloat(item.propio))}</td>
+                    <td>${formatCurrency(parseFloat(item.sol))}</td>
+                    <td>${formatCurrency(tot)}</td></tr>`;
+            });
+            tableHtml += `</tbody></table>`;
+            fullHtml += `<p style="text-align: right; margin-top: 10px;"><strong>Esfuerzo del Pueblo (Aporte Propio):</strong> ${formatCurrency(parseFloat(formData['presupuesto_total_propio']))}<br>
+            <strong>Provisión Solicitada (Financiador):</strong> ${formatCurrency(parseFloat(formData['presupuesto_total_solicitado']))}<br>
+            <span style="font-size: 16px; color: #1e3a8a;"><strong>COSTO TOTAL DE LA OBRA:</strong> ${formatCurrency(parseFloat(formData['presupuesto_total_proyecto']))}</span></p>`;
+            fullHtml += tableHtml + `</div>`;
+
+            fullHtml += addSection('VII. Sostenibilidad y Riesgos', [
+                {key: 'tiempo_inicio', label: 'Cuándo iniciar'},
+                {key: 'riesgos_identificados', label: 'Riesgos Identificados'},
+                {key: 'sostenibilidad_plan', label: 'Sostenimiento Futuro'},
+                {key: 'sostenibilidad_admin', label: 'Administración y Mantenimiento'}
+            ]);
+
+            document.getElementById('pdf-body').innerHTML = fullHtml;
+        }
+
+        function downloadPDFReport() {
+            if (!validateCurrentStep()) return;
+            buildComprehensiveHTML();
+            
+            // Para asegurar que renderice toda la altura, se coloca fuera de la pantalla temporalmente pero visible
+            const pdfContainer = document.getElementById('pdf-container');
+            const element = document.getElementById('report-content');
+            
+            pdfContainer.style.display = 'block';
+            pdfContainer.style.position = 'absolute';
+            pdfContainer.style.left = '-9999px';
+            pdfContainer.style.top = '0';
+            pdfContainer.style.width = '800px'; // Forzamos un ancho fijo de escritorio para estabilizar el cálculo
+
+            let municipio = formData['proponente_municipio'] ? formData['proponente_municipio'].replace(/[^a-z0-9]/gi, '_') : 'Proyecto';
+
+            const opt = {
+                margin:       15,
+                filename:     `Planos_Obra_${municipio}_${Date.now()}.pdf`,
+                image:        { type: 'jpeg', quality: 0.98 },
+                html2canvas:  { scale: 2, useCORS: true, windowWidth: 800 },
+                jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' },
+                pagebreak:    { mode: ['css', 'legacy'] } // CRÍTICO: Usa las reglas CSS para no cortar textos/tablas
+            };
+
+            showToast("Generando el pergamino PDF completo, por favor espera...", "info");
+            
+            html2pdf().set(opt).from(element).save().then(() => {
+                // Restauramos el contenedor a su estado oculto
+                pdfContainer.style.display = 'none';
+                pdfContainer.style.position = 'static';
+                pdfContainer.style.left = '0';
+                pdfContainer.style.width = 'auto';
+                showToast("Planos descargados con éxito. ¡Estás listo para enviarlos por WhatsApp!", "success", 5000);
+            }).catch(err => {
+                pdfContainer.style.display = 'none';
+                pdfContainer.style.position = 'static';
+                showToast("Hubo un error al generar el PDF. Intenta de nuevo.", "error");
+            });
+        }
+
+        function prepareFinalReport() {
+            if (!validateCurrentStep()) return;
+            saveDataToMemory();
+            buildComprehensiveHTML();
+
+            let waText = `*NUEVA VISIÓN DE RESTAURACIÓN (PROYECTO)*\n`;
+            waText += `*Fecha:* ${new Date().toLocaleDateString('es-CO')}\n\n`;
+            
+            waText += `*I. EL LÍDER Y EL TERRITORIO*\n`;
+            waText += `Líder: ${formData['proponente_nombre']}\n`;
+            waText += `Tierra: ${formData['proponente_municipio']}, ${formData['proponente_departamento']} (${formData['proponente_comunidad']})\n`;
+            if(formData['org_nombre']) waText += `Congregación/Org: ${formData['org_nombre']}\n`;
+            
+            waText += `\n*II. LA OBRA*\n`;
+            waText += `Nombre: ${formData['iniciativa_nombre']}\n`;
+            waText += `Naturaleza: ${formData['categoria_principal_texto']}\n`;
+            
+            const truncate = (str, n) => (str && str.length > n) ? str.substr(0, n-1) + '...' : str;
+
+            waText += `\n*III. DIAGNÓSTICO Y ACCIÓN*\n`;
+            waText += `Problema Central: ${truncate(formData['problema_central'], 150)}\n`;
+            waText += `Objetivo / Solución: ${truncate(formData['objetivo_general'], 150)}\n`;
+            waText += `Familias impactadas: ${formData['poblacion_directa']} de forma directa.\n`;
+            waText += `Tiempo cronograma: ${formData['cronograma_meses']} meses\n`;
+
+            waText += `\n*IV. LA PROVISIÓN (Presupuesto)*\n`;
+            waText += `Esfuerzo del pueblo: ${formatCurrency(parseFloat(formData['presupuesto_total_propio']))}\n`;
+            waText += `Ayuda Solicitada: ${formatCurrency(parseFloat(formData['presupuesto_total_solicitado']))}\n`;
+            waText += `Total Obra: ${formatCurrency(parseFloat(formData['presupuesto_total_proyecto']))}\n`;
+            
+            waText += `\n-----------------------\n`;
+            waText += `*Nota del mensajero:* Los planos completos de esta obra están en el PDF que descargó el líder. Por favor, pídale que envíe ese archivo y las cartas de evidencia (fotos) aquí mismo.`;
+
+            const encodedMsg = encodeURIComponent(waText);
+            const waLink = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodedMsg}`;
+            
+            localStorage.removeItem('fssh_nehemias_draft');
+
+            window.open(waLink, '_blank');
+        }
+    </script>
+</body>
+</html>
